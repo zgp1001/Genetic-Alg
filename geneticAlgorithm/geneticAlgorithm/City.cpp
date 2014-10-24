@@ -8,10 +8,8 @@ City::City()
 
 //Argumented constructor 
 City::City(float xVal, float yVal){
-	if (xVal >= 0 && xVal < MAX_X)
-		x = xVal;
-	if (yVal >= 0 && yVal < MAX_Y)
-		y = yVal;
+	setX(xVal);
+	setY(yVal);
 }
 
 //Fully-Argumented Constructor
