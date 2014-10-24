@@ -17,7 +17,7 @@ City::City(float xVal, float yVal){
 //Fully-Argumented Constructor
 City::City(string n, int i, float xIn, float yIn){
 	name = n;
-	id = 1;
+	id = i;
 	setX(xIn);
 	setY(yIn);
 }
