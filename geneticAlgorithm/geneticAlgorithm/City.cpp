@@ -14,6 +14,25 @@ City::City(float xVal, float yVal){
 		y = yVal;
 }
 
+//Fully-Argumented Constructor
+City::City(string n, int i, float xIn, float yIn){
+	name = n;
+	id = 1;
+	setX(xIn);
+	setY(yIn);
+}
+
+//assignment operator overload (makes route simpler)
+City City::operator=(City toBeCopied){
+	if (this != &toBeCopied){
+		this->id = toBeCopied.id;
+		this->name = toBeCopied.name;
+		this->x = toBeCopied.x;
+		this->y = toBeCopied.y;
+	}
+	return *this;
+}
+
 //Setters defined below 
 void City::setId(int i){ id = i; }
 void City::setName(string n){ name = n; }

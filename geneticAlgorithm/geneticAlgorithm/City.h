@@ -9,6 +9,10 @@ public:
 	//Constructors 
 	City();	  //No-Arg constructor (does not set any values) 
 	City(float, float);   //Parameters = X, Y 
+	City(string, int, float, float);	//All Parameters
+	
+	//assignment operator overload
+	City operator=(City);
 
 	//Setters
 	void setX(float);
