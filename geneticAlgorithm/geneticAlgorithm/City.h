@@ -3,6 +3,9 @@
 #include <cctype>		//Used for type checking 
 using namespace std;	
 
+#ifndef CITY
+#define City
+
 class City
 {
 public:
@@ -34,4 +37,4 @@ private:
 	const float MAX_X = 10000;
 	const float MAX_Y = 10000;
 };
-
+#endif
