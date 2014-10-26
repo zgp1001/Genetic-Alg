@@ -1,4 +1,3 @@
-#pragma once
 #include <string> 
 #include <cctype>		//Used for type checking 
 using namespace std;	
@@ -34,7 +33,7 @@ private:
 	float y; 
 	int id;
 	string name;
-	const float MAX_X = 10000;
-	const float MAX_Y = 10000;
+	static const float MAX_X;
+	static const float MAX_Y;
 };
 #endif
