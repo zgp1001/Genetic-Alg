@@ -4,6 +4,9 @@
 #include "City.h"
 using namespace std;
 
+#ifndef ROUTE
+#define ROUTE
+
 class Route{
 private:
 	City* cities;
@@ -30,3 +33,4 @@ public:
 	float getDistance();
 
 };
+#endif
