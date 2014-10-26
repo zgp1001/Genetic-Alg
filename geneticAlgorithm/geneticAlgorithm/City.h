@@ -4,7 +4,7 @@
 using namespace std;	
 
 #ifndef CITY
-#define City
+#define CITY
 
 class City
 {
