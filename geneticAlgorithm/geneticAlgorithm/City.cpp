@@ -3,7 +3,7 @@
 //No-Arg constructor 
 City::City()
 {
-	//Do nothing
+	//Do Nothing
 }
 
 //Argumented constructor 

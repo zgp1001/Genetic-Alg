@@ -65,9 +65,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="City.h" />
+    <ClInclude Include="GeneticFuncs.h" />
+    <ClInclude Include="Route.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="City.cpp" />
+    <ClCompile Include="GeneticFuncs.cpp" />
+    <ClCompile Include="Route.cpp" />
+    <ClCompile Include="Source.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

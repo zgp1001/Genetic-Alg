@@ -18,10 +18,25 @@
     <ClInclude Include="City.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Route.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneticFuncs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="City.cpp">
+    <ClCompile Include="Source.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Route.cpp">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="City.cpp">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneticFuncs.cpp">
+      <Filter>Resource Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

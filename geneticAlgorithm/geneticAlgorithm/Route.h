@@ -24,6 +24,7 @@ public:
 	void setCities(City*);
 	void setCityAt(City, int);
 	void setNumCities(int);
+	void addCity(City);
 
 	//getters
 	City* getCities();

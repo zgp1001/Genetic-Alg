@@ -67,6 +67,11 @@ void Route::setNumCities(int newNum){
 	}
 }
 
+void Route::addCity(City  c){
+	this->setNumCities(this->getNumCities() + 1);
+	this->setCityAt(c, this->getNumCities()-1);
+}
+
 //**********************Getters
 City* Route::getCities(){ return cities; }
 City Route::getCityAt(int x){ return cities[x]; }
