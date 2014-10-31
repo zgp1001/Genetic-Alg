@@ -9,6 +9,18 @@
 */
 
 int main() {
+	
+	//set up city array
+	//generate routes
+
+	//while loop
+	//pair best parents
+	//cross parents
+	//check for best children
+	//half best parents, half best children
+
+	//loop ends when 50 successive generations do not generate better child.
+	
 	City a = City(0.5, 120);
 	a.setName("45");
 	Route r = Route();
