@@ -12,6 +12,20 @@
 
 int main() {
 
+
+	//set up city array
+	//generate routes
+
+	//while loop
+	//pair best parents
+	//cross parents
+	//check for best children
+	//half best parents, half best children
+
+	//loop ends when 50 successive generations do not generate better child.
+
+	
+	
 //create city array
 	ifstream myReadFile;
 	string nextData;
