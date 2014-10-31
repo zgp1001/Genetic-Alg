@@ -36,12 +36,12 @@ void City::setId(int i){ id = i; }
 void City::setName(string n){ name = n; }
 
 void City::setX(float newX){
-	if (newX >= 0 && newX < MAX_X)
+	//if (newX >= 0 && newX < MAX_X)
 		x = newX;
 }
 
 void City::setY(float newY){
-	if (newY >= 0 && newY < MAX_Y)
+	//if (newY >= 0 && newY < MAX_Y)
 		y = newY;
 }
 

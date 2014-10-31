@@ -33,7 +33,7 @@ private:
 	float y; 
 	int id;
 	string name;
-	const float MAX_X = 10000;
-	const float MAX_Y = 10000;
+	//const float MAX_X = 10000;
+	//const float MAX_Y = 10000;
 };
 #endif
