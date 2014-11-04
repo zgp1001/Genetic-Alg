@@ -5,6 +5,8 @@
 #include <fstream>
 #include <string.h>
 
+const int NUM_GENERATION_STOPPER = 100;
+
 /*For purposes of TSP 
 	City = a node on a graph 
 	Route = a tour of Cities listed in traversal order (linked list, essentially) 
@@ -70,6 +72,20 @@ int main() {
 	}
 
 	edgeRecombination(p1, p2);
+	
+	int generationCounter=0;//counts the number of generations since better child was found
+	while (generationCounter < NUM_GENERATION_STOPPER)
+	{
+		if(true)//test for better child
+		{
+			generationCounter=0;
+		}
+		else
+		{
+			generationCounter++;
+		}
+	}
+	
 	system("Pause");
 	return 0;
 }
