@@ -1,6 +1,6 @@
 #include "City.h"			//Defines City Class
 #include "Route.h"			//Defines Route Class
-//#include "GeneticFuncs.h"	//Holds GA Functions
+#include "GeneticFuncs.h"	//Holds GA Functions
 #include <iostream> 
 #include <fstream>
 #include <string.h>
@@ -40,32 +40,36 @@ int main() {
 		while(myReadFile >> nextData){
 			if(col == 1){
 				theCityArray[i].setId(atoi(nextData.c_str()));
-				cout << nextData << endl;
+				//cout << nextData << endl;
 				col++;
 			}
 			else if(col == 2){
 				theCityArray[i].setX(atof(nextData.c_str()));
-				cout << nextData << endl;
+				//cout << nextData << endl;
 				col++;
 			}
 			else if(col == 3){
 				theCityArray[i].setY(atof(nextData.c_str()));
-				cout << nextData << endl;
+				//cout << nextData << endl;
 				col=1;
 				i++;
 			}
 			else
-				cout << "YA DONE FUCKED UP M8!";
+				cout << "Problem";
 		}//while has next data
 	}//if file open
-
-	for(int i = 0; i < 29; i++)
-	{
-		cout << theCityArray[i].getId() << endl;
+	else {
+		cout << "File failed to open\n";
 	}
 
-	//cout << "City name = " << r.getCityAt(1).getName() << "\n";
-	//testFunc();
+	Route p1 = Route();
+	Route p2 = Route();
+	for (int i = 0; i < 29; i++){
+		p1.addCity(theCityArray[i]);
+		p2.addCity(theCityArray[28 - i]);
+	}
+
+	edgeRecombination(p1, p2);
 	system("Pause");
 	return 0;
 }

@@ -15,7 +15,7 @@ public:
 	Route();	//no arg constructor
 	Route(City*, int);	//Argumented constructor
 	Route(Route&);	//copy Constructor
-	~Route();	//destructor
+	//~Route();	//destructor
 
 	//operator overload
 	Route& operator=(const Route&);
@@ -27,10 +27,11 @@ public:
 	void addCity(City);
 
 	//getters
-	City* getCities();
-	City getCityAt(int);
-	int getNumCities();
-	float getDistance();
+	City* getCities() const;
+	City getCityAt(int) const;
+	City getCityByID(int) const;
+	int getNumCities() const; 
+	float getDistance() const;
 
 };
 #endif

@@ -20,11 +20,11 @@ Route::Route(Route& toBeCopied){
 	setNumCities(toBeCopied.numCities);
 	setCities(toBeCopied.cities);
 }
-
+/*
 //Destructor
 Route::~Route(){
 	delete[] cities;
-}
+}*/
 
 //assignment operator overload
 Route& Route::operator=(const Route& toBeCopied){
@@ -73,11 +73,16 @@ void Route::addCity(City  c){
 }
 
 //**********************Getters
-City* Route::getCities(){ return cities; }
-City Route::getCityAt(int x){ return cities[x]; }
-int Route::getNumCities(){return numCities;}
+City* Route::getCities() const{ return cities; }
+City Route::getCityAt(int x) const { return cities[x]; }
+City Route::getCityByID(int id) const {
+	for (int i = 0; i < this->getNumCities(); i++)
+		if (this->getCityAt(i).getId() == id)
+			return this->getCityAt(i);
+}
+int Route::getNumCities() const { return numCities; }
 
-float Route::getDistance(){	//easiest to calculate whenever asked than to
+float Route::getDistance() const {	//easiest to calculate whenever asked than to
 	float distance=0.0;		//recalculate every time cities change
 	for (int i = 0; i < numCities - 1; i++){
 		distance += sqrt(((cities[i + 1].getX() - cities[i].getX())*
