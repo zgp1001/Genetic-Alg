@@ -6,6 +6,8 @@
 #include <string.h>
 
 const int NUM_GENERATION_STOPPER = 100;
+const int NUM_ROUTES = 100;
+const int NUM_CITIES = 29;
 
 /*For purposes of TSP 
 	City = a node on a graph 
@@ -31,7 +33,7 @@ int main() {
 //create city array
 	ifstream myReadFile;
 	string nextData;
-	City theCityArray[29];
+	City theCityArray[NUM_CITIES];
 
 	int col = 1;
 	int i = 0;
@@ -66,25 +68,68 @@ int main() {
 
 	Route p1 = Route();
 	Route p2 = Route();
-	for (int i = 0; i < 29; i++){
+	Route p3 = Route();
+	for (int i = 0; i < NUM_CITIES; i++){
 		p1.addCity(theCityArray[i]);
 		p2.addCity(theCityArray[28 - i]);
 	}
 
-	edgeRecombination(p1, p2);
+	p3 = edgeRecombination(p1, p2);
 	
 	int generationCounter=0;//counts the number of generations since better child was found
+	Route * bestRoute;
+	float currentBestChild=0;
+	Route * routeAry = new Route[NUM_ROUTES];
+	Route * tempRouteAry = new Route[NUM_ROUTES];
+
+	//fill routes
+	for (int i=0; i<NUM_ROUTES; i++)
+	{
+		routeAry[i] = Route(theCityArray, NUM_CITIES);
+	}
+
 	while (generationCounter < NUM_GENERATION_STOPPER)
 	{
-		if(true)//test for better child
+		//create new generation
+		for (int i = 0; i < NUM_ROUTES/2; i++)
 		{
-			generationCounter=0;
+			tempRouteAry[i] = edgeRecombination(routeAry[i*2], routeAry[(i*2)+1]);
+		}
+		for (int j = NUM_ROUTES/2; j < NUM_ROUTES; j++)
+		{
+			//routeAry.sort(); a sort function would be nice smallest distance first
+			tempRouteAry[j] = routeAry[j-(NUM_ROUTES/2)];//should be parent. find best parents idk
+		}
+
+		//update Route ary
+		for (int l = 0; l < NUM_ROUTES; l++)
+		{
+			routeAry[l] = tempRouteAry[l];
+		}
+
+		//find best route
+		bestRoute = routeAry;
+		for (int k = 1; k < NUM_ROUTES; k++)
+		{
+			if (routeAry->getDistance() < bestRoute->getDistance())
+			{
+				bestRoute = &routeAry[k];
+			}
+		}
+
+		if(bestRoute->getDistance() < currentBestChild)//test for better child
+		{
+			generationCounter = 0;
+			currentBestChild = bestRoute->getDistance();
 		}
 		else
 		{
 			generationCounter++;
 		}
 	}
+
+	delete [] routeAry;
+	delete [] tempRouteAry;
 	
 	system("Pause");
 	return 0;
