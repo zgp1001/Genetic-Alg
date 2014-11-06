@@ -35,6 +35,20 @@ int main() {
 	string nextData;
 	City theCityArray[NUM_CITIES];
 
+	Route p1 = Route();
+	Route p2 = Route();
+	Route p3 = Route();
+
+	int index;
+	City tempCityAry[NUM_CITIES];
+	Route tempRoute = Route(tempCityAry, NUM_CITIES);
+
+	int generationCounter = 0;//counts the number of generations since better child was found
+	Route * bestRoute;
+	float currentBestChild = 0;
+	Route * routeAry = new Route[NUM_ROUTES];
+	Route * tempRouteAry = new Route[NUM_ROUTES];
+
 	int col = 1;
 	int i = 0;
 
@@ -65,27 +79,32 @@ int main() {
 	else {
 		cout << "File failed to open\n";
 	}
-
-	Route p1 = Route();
-	Route p2 = Route();
-	Route p3 = Route();
+	/*
 	for (int i = 0; i < NUM_CITIES; i++){
 		p1.addCity(theCityArray[i]);
 		p2.addCity(theCityArray[28 - i]);
 	}
 
 	p3 = edgeRecombination(p1, p2);
-	
-	int generationCounter=0;//counts the number of generations since better child was found
-	Route * bestRoute;
-	float currentBestChild=0;
-	Route * routeAry = new Route[NUM_ROUTES];
-	Route * tempRouteAry = new Route[NUM_ROUTES];
-
+	*/
 	//fill routes
 	for (int i=0; i<NUM_ROUTES; i++)
 	{
-		routeAry[i] = Route(theCityArray, NUM_CITIES);
+		for (int j = 0; j < NUM_CITIES; j++){
+			tempCityAry[j] = theCityArray[j];
+		}
+		for (int j = 0; j < NUM_CITIES; j++){
+			//pick a city
+			index = rand() % (NUM_CITIES - j);
+			tempRoute.setCityAt(tempCityAry[index], j);
+
+			//shrink array
+			for (int k = index; k < NUM_CITIES - (j + 1); k++){//gets shorter every time
+				tempCityAry[k] = tempCityAry[k + 1];
+			}
+		}
+		routeAry[i] = tempRoute;
+		routeAry[i].setNumCities(NUM_CITIES);
 	}
 
 	while (generationCounter < NUM_GENERATION_STOPPER)

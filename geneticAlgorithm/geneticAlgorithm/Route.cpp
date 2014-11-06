@@ -4,6 +4,7 @@
 //no-arg Constructor
 Route::Route(){
 	//nothing to do
+	numCities = 0;
 }
 
 //Argumented Constructor
@@ -29,11 +30,8 @@ Route::~Route(){
 //assignment operator overload
 Route& Route::operator=(const Route& toBeCopied){
 	if (this != &toBeCopied){
-		this->numCities = toBeCopied.numCities;
-		this->cities = new City[this->numCities];
-		for (int i = 0; i < this->numCities; i++){
-			this->cities[i] = toBeCopied.cities[i];
-		}
+		this->setNumCities(toBeCopied.numCities);
+		this->setCities(toBeCopied.cities);
 	}
 	return *this;
 }
@@ -56,12 +54,16 @@ void Route::setNumCities(int newNum){
 		//recreate cities array if size is bigger
 		//if size is smaller, rest of array can remain empty
 		if (newNum > numCities){
-			City* temp = cities;
-			cities = new City[newNum];
-			for (int i = 0; i < numCities; i++){	//for every existing city
-				cities[i] = temp[i];//copy over city into new array
+			if (numCities > 0){
+				City* temp = cities;
+				cities = new City[newNum];
+				for (int i = 0; i < numCities; i++){	//for every existing city
+					cities[i] = temp[i];//copy over city into new array
+				}
+				delete[] temp;
 			}
-			delete[] temp;
+			else
+				cities = new City[newNum];
 		}
 		numCities = newNum;
 	}
