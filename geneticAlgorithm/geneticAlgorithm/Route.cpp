@@ -14,6 +14,9 @@ Route::Route(City* newCities, int numOfCities){
 		cities = new City[numCities];
 		setCities(newCities);
 	}
+	else {
+		numCities = 0;
+	}
 }
 
 //copy constructor
@@ -71,7 +74,7 @@ void Route::setNumCities(int newNum){
 
 void Route::addCity(City  c){
 	this->setNumCities(this->getNumCities() + 1);
-	this->setCityAt(c, this->getNumCities()-1);
+	this->setCityAt(c, this->getNumCities() - 1);
 }
 
 //**********************Getters

@@ -4,6 +4,7 @@
 #include <iostream> 
 #include <fstream>
 #include <string.h>
+#include <time.h>
 
 const int NUM_GENERATION_STOPPER = 100;
 const int NUM_ROUTES = 100;
@@ -38,6 +39,7 @@ int main() {
 	Route p1 = Route();
 	Route p2 = Route();
 	Route p3 = Route();
+	srand(time(NULL));
 
 	int index;
 	City tempCityAry[NUM_CITIES];
@@ -52,7 +54,7 @@ int main() {
 	int col = 1;
 	int i = 0;
 
-	myReadFile.open("29CitiesData.txt");
+	myReadFile.open("29City27603.txt");
 
 	if(myReadFile.is_open()){
 		while(myReadFile >> nextData){
@@ -79,14 +81,7 @@ int main() {
 	else {
 		cout << "File failed to open\n";
 	}
-	/*
-	for (int i = 0; i < NUM_CITIES; i++){
-		p1.addCity(theCityArray[i]);
-		p2.addCity(theCityArray[28 - i]);
-	}
 
-	p3 = edgeRecombination(p1, p2);
-	*/
 	//fill routes
 	for (int i=0; i<NUM_ROUTES; i++)
 	{
@@ -146,6 +141,26 @@ int main() {
 			generationCounter++;
 		}
 	}
+
+	cout << bestRoute->getDistance() << endl;
+
+	/*
+	TESTING GA CX	
+	Route test;
+	
+	for (int i = 0; i < 29; i++){
+		cout << routeAry[0].getCityAt(i).getId() << ",";
+	}
+	cout << "\nRoute 2\n";
+	for (int i = 0; i < 29; i++){
+		cout << routeAry[1].getCityAt(i).getId() << ",";
+	}
+	cout << endl;
+	test = edgeRecombination(routeAry[0], routeAry[1]);
+
+	cout << "\nRoute A Rating = " << routeAry[0].getDistance();
+	cout << "\nRoute B Rating = " << routeAry[1].getDistance();
+	cout << "\nRoute C Rating = " << test.getDistance() << endl;*/
 
 	delete [] routeAry;
 	delete [] tempRouteAry;

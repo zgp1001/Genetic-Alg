@@ -6,6 +6,7 @@ using namespace std;
 
 Route edgeRecombination(const Route &a, const Route &b);
 bool validParents(const Route &a, const Route &b);
+int getIndex(int id, int **edges, int cities);
 
 /*Performs Edge Recombination Crossover
 	Parameters = Pair of parents   
@@ -15,9 +16,11 @@ Route edgeRecombination(const Route &a, const Route &b) {
 	  When selecting which city to travel to next out of the possibly cities preference is given to cities with less connections
 	  stemming from them. As cities are traveled to they are removed from the list of possibly cities. */
 
+	Route child = Route();
+
 	if (!validParents(a, b)){  //Both routes must have equal amount of cities (if not, exit) 
 		cout << "\nINVALID PARENTS PASSED TO edgeRecombination()\n";
-		return Route();
+		return child;
 	}
 
 	//Begin implemention of cross-over 
@@ -71,14 +74,131 @@ Route edgeRecombination(const Route &a, const Route &b) {
 		}
 	}
 
-	//Test print
-	for (int i = 0; i < numCities; i++){
-		for (int j = 0; j < 5; j++)
-			cout << connections[i][j] << "     ";
-		cout << endl;
+	////Print connections array (for testing) 
+	//for (int i = 0; i < numCities; i++){
+	//	cout << connections[i][0] << ": ";
+	//	for (int j = 1; j < 5; j++){
+	//		cout << connections[i][j] << " ";
+	//	}
+	//	cout << "\n";
+	//}
+
+	//Pick a random start city from the Routes 
+	int index;
+	int nextIndex;
+	int min;
+	int bestId;
+	int count;
+	int numCons;
+	int random = rand() % 2; 
+	
+	if (random == 0){
+		child.addCity(a.getCityAt(0));
+		bestId = a.getCityAt(0).getId();
 	}
-	return Route();  //TODO: Return child route 
+	else{
+		child.addCity(b.getCityAt(0));
+		bestId = b.getCityAt(0).getId();
+	}
+
+	//Now remove references to this city from other cities 
+	for (int cities = 0; cities < numCities; cities++){
+		for (int links = 1; links < possibleConnections; links++){
+			if (connections[cities][links] == bestId)
+				connections[cities][links] = NULL;
+		}
+	}
+
+	for (int i = 0; i < numCities-1; i++){
+		index = getIndex(child.getCityAt(i).getId(), connections, numCities);
+		//cout << index << endl;
+		min = possibleConnections - 1;
+		numCons = 0;
+		bestId = NULL;
+		for (int cons = 1; cons < possibleConnections; cons++){
+			if (connections[index][cons] != NULL){
+				//cout << "connection found between city " << connections[index][0] << " and city " << connections[index][cons] << endl;
+				numCons++;
+				nextIndex = getIndex(connections[index][cons], connections, numCities);
+				count = 0;
+				for (int test = 1; test < possibleConnections; test++){
+					if (connections[nextIndex][test] != NULL){
+						count++;
+					}
+				}
+				if (count == min){
+					bestId = NULL;
+				}
+				else if (count < min){
+					min = count;
+					bestId = connections[index][cons];
+				}
+			}
+		}
+		//Add best city if one was found
+		if (min != possibleConnections - 1 && bestId != NULL){
+			//cout << "adding child" << endl;
+			child.addCity(a.getCityByID(bestId));
+		}
+		//Add random city (no clear best)
+		else if(numCons > 0){
+			random = rand() % (possibleConnections - 1) + 1; 
+			while (connections[index][random] == NULL)
+				random = rand() % (possibleConnections - 1) + 1;
+			bestId = connections[index][random];
+			//cout << "Best city found = " << a.getCityByID(bestId).getId() << endl;
+			child.addCity(a.getCityByID(bestId));
+		}
+		else {
+			//cout << "No connections on " << child.getCityAt(i).getId() << endl;
+			int childCities = child.getNumCities();
+			int *posIds = new int[numCities - childCities];
+			int search;
+			int foundNum = 0;
+			bool found = false;
+			for (int c = 0; c < numCities; c++){
+				search = connections[c][0]; 
+				for (int n = 0; n < childCities; n++){
+					if (child.getCityAt(n).getId() == search)
+						found = true;
+				}
+				if (!found){
+					posIds[foundNum] = search;
+					foundNum++;
+				}
+				else {
+					found = false;
+				}
+			}
+			random = rand() % (numCities - childCities);
+			bestId = posIds[random];
+			child.addCity(a.getCityByID(bestId));
+		}
+		//Now remove references to this city from other cities 
+		for (int cities = 0; cities < numCities; cities++){
+			for (int links = 1; links < possibleConnections; links++){
+				if (connections[cities][links] == bestId)
+					connections[cities][links] = NULL;
+			}
+		}
+	}
+
+	/*cout << "Child Route\n";
+	for (int i = 0; i < numCities; i++)
+		cout << child.getCityAt(i).getId() << ",";
+	cout << endl;*/
+
+	return child;  
 } 
+
+int getIndex(int id, int** edges, int cities){
+	int ret;
+	for (int i = 0; i < cities; i++){
+		if (edges[i][0] == id)
+			ret = i;
+	}
+	return ret;
+}
 
 bool inArray(int search, int *row, int len){
 	bool ret = false;
