@@ -95,5 +95,9 @@ float Route::getDistance() const {	//easiest to calculate whenever asked than to
 			+ ((cities[i + 1].getY() - cities[i].getY())*
 			(cities[i + 1].getY() - cities[i].getY())));
 	}
+	distance += sqrt(((cities[0].getX() - cities[numCities - 1].getX())*
+		(cities[0].getX() - cities[numCities - 1].getX()))
+		+ ((cities[0].getY() - cities[numCities - 1].getY())*
+		(cities[0].getY() - cities[numCities - 1].getY())));
 	return distance;
 }
