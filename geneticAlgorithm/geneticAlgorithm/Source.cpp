@@ -23,6 +23,7 @@ void sortRouteArray();
 using namespace std;
 #include <conio.h>
 
+//MERGE SORT STUFFS
 void merge(Route *,int, int , int );
 void mergesort(Route *a, int low, int high)
 {
@@ -36,10 +37,11 @@ void mergesort(Route *a, int low, int high)
     }
     return;
 }
-void merge(int *a, int low, int high, int mid)
+//MERGE SORT THE ARRAYS
+void merge(Route *a, int low, int high, int mid)
 {
     int i, j, k;
-	Route c = new Route[high-low];
+	Route *c = new Route[high-low];
     i = low;
     k = low;
     j = mid + 1;
@@ -117,7 +119,7 @@ int main() {
 	int col = 1;
 	int i = 0;
 
-	myReadFile.open("29City27603.txt");
+	myReadFile.open("29CitiesData.txt");
 
 	if(myReadFile.is_open()){
 		while(myReadFile >> nextData){
