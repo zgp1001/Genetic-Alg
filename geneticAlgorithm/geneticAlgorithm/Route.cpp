@@ -22,7 +22,7 @@ Route::Route(City* newCities, int numOfCities){
 //copy constructor
 Route::Route(Route& toBeCopied){
 	setNumCities(toBeCopied.numCities);
-	setCities(toBeCopied.cities);
+	setCities(toBeCopied.cities); 
 }
 /*
 //Destructor

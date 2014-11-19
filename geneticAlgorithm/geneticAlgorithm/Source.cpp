@@ -5,6 +5,8 @@
 #include <fstream>
 #include <string.h>
 #include <time.h>
+using namespace std;
+#include <conio.h>
 
 const int NUM_GENERATION_STOPPER = 100;
 const int NUM_ROUTES = 100;
@@ -19,11 +21,30 @@ void sortRouteArray();
 /*
  * C++ Program to Implement Merge Sort
  */
-#include <iostream>
-using namespace std;
-#include <conio.h>
 
-//MERGE SORT STUFFS
+
+void bubbleSort(Route *a)
+{
+	Route swap;
+	for (int c = 0; c < NUM_ROUTES - 1; c++)
+	{
+		for (int d = 0; d < NUM_ROUTES - c - 1; d++)
+		{
+			if (a[d].getDistance() > a[d + 1].getDistance()) /* For decreasing order use < */
+			{
+				swap = a[d];
+				a[d] = a[d + 1];
+				a[d + 1] = swap;
+			}
+		}
+	}
+
+	for (int i = 0; i < NUM_ROUTES - 1; i++)
+		cout << a[i].getDistance() << endl;
+	cout << endl << endl << endl << endl;
+}
+
+/* MERGE SORT STUFFS
 void merge(Route *,int, int , int );
 void mergesort(Route *a, int low, int high)
 {
@@ -77,8 +98,7 @@ void merge(Route *a, int low, int high, int mid)
     {
         a[i] = c[i];
     }
-	delete []c;
-}
+}*/
 
 int main() {
 
@@ -119,7 +139,7 @@ int main() {
 	int col = 1;
 	int i = 0;
 
-	myReadFile.open("29CitiesData.txt");
+	myReadFile.open("29C27603.txt");
 
 	if(myReadFile.is_open()){
 		while(myReadFile >> nextData){
@@ -147,6 +167,7 @@ int main() {
 		cout << "File failed to open\n";
 	}
 
+
 	//fill routes
 	for (int i=0; i<NUM_ROUTES; i++)
 	{
@@ -167,6 +188,8 @@ int main() {
 		routeAry[i].setNumCities(NUM_CITIES);
 	}
 
+	
+	
 	while (generationCounter < NUM_GENERATION_STOPPER)
 	{
 		//create new generation
@@ -174,6 +197,11 @@ int main() {
 		{
 			tempRouteAry[i] = edgeRecombination(routeAry[i*2], routeAry[(i*2)+1]);
 		}
+
+		//sort routes
+		//mergesort(routeAry, 0, NUM_CITIES - 1);
+		bubbleSort(routeAry);
+
 		for (int j = NUM_ROUTES/2; j < NUM_ROUTES; j++)
 		{
 			//routeAry.sort(); a sort function would be nice smallest distance first
@@ -230,6 +258,6 @@ int main() {
 	delete [] routeAry;
 	delete [] tempRouteAry;
 	
-	system("Pause");
+	system("pause");
 	return 0;
 }

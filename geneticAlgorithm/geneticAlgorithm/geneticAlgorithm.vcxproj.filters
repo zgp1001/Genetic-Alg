@@ -43,5 +43,8 @@
     <Text Include="..\29CitiesData.txt">
       <Filter>Resource Files</Filter>
     </Text>
+    <Text Include="..\29C27603.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
   </ItemGroup>
 </Project>
