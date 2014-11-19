@@ -169,13 +169,13 @@ int main() {
 
 
 	//fill routes
-	for (int i=0; i<NUM_ROUTES; i++)
+	for (int i=0; i<NUM_ROUTES; i++)//for each route
 	{
-		for (int j = 0; j < NUM_CITIES; j++){
+		for (int j = 0; j < NUM_CITIES; j++){	//set temporary city array
 			tempCityAry[j] = theCityArray[j];
 		}
-		for (int j = 0; j < NUM_CITIES; j++){
-			//pick a city
+		for (int j = 0; j < NUM_CITIES; j++){	//loop through cities
+			//pick a city and put it in route
 			index = rand() % (NUM_CITIES - j);
 			tempRoute.setCityAt(tempCityAry[index], j);
 
@@ -184,8 +184,8 @@ int main() {
 				tempCityAry[k] = tempCityAry[k + 1];
 			}
 		}
-		routeAry[i] = tempRoute;
-		routeAry[i].setNumCities(NUM_CITIES);
+		routeAry[i] = tempRoute;	//assign route into array
+		routeAry[i].setNumCities(NUM_CITIES);//can probably delete (not sure)
 	}
 
 	
