@@ -9,7 +9,7 @@ using namespace std;
 #include <conio.h>
 
 const int NUM_GENERATION_STOPPER = 100;
-const int NUM_ROUTES = 100;
+const int NUM_ROUTES = 1000;
 const int NUM_CITIES = 29;
 
 /*For purposes of TSP 
@@ -167,7 +167,8 @@ int main() {
 		cout << "File failed to open\n";
 	}
 
-
+	clock_t stopTime, startTime;
+	startTime = clock();
 	//fill routes
 	for (int i=0; i<NUM_ROUTES; i++)//for each route
 	{
@@ -254,6 +255,10 @@ int main() {
 	cout << "\nRoute A Rating = " << routeAry[0].getDistance();
 	cout << "\nRoute B Rating = " << routeAry[1].getDistance();
 	cout << "\nRoute C Rating = " << test.getDistance() << endl;*/
+
+	stopTime = clock();
+	float seconds = (float)(stopTime - startTime) / CLOCKS_PER_SEC;
+	cout << endl << seconds << endl;
 
 	delete [] routeAry;
 	delete [] tempRouteAry;
