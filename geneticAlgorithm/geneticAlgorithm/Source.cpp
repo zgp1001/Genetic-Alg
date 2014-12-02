@@ -6,22 +6,16 @@
 #include <string.h>
 #include <time.h>
 using namespace std;
-#include <conio.h>
 
-const int NUM_GENERATION_STOPPER = 100;
-const int NUM_ROUTES = 1000;
-const int NUM_CITIES = 29;
+const int NUM_GENERATION_STOPPER = 100;	
+const int NUM_ROUTES = 3000;		//Size of parent population (usually ~number of cities ^2 is a good starting point) 
+const int NUM_CITIES = 51;		//Must be set equal to data set in string FILE_NAME
+const string FILE_NAME = "51City426.txt";
 
-/*For purposes of TSP 
-	City = a node on a graph 
-	Route = a tour of Cities listed in traversal order (linked list, essentially) 
-*/
-
-void sortRouteArray();
 /*
- * C++ Program to Implement Merge Sort
- */
-
+* C++ Program to Implement Merge Sort
+*/
+void sortRouteArray();
 
 void bubbleSort(Route *a)
 {
@@ -44,86 +38,23 @@ void bubbleSort(Route *a)
 	cout << endl << endl << endl << endl;
 }
 
-/* MERGE SORT STUFFS
-void merge(Route *,int, int , int );
-void mergesort(Route *a, int low, int high)
-{
-    int mid;
-    if (low < high)
-    {
-        mid=(low+high)/2;
-        mergesort(a,low,mid);
-        mergesort(a,mid+1,high);
-        merge(a,low,high,mid);
-    }
-    return;
-}
-//MERGE SORT THE ARRAYS
-void merge(Route *a, int low, int high, int mid)
-{
-    int i, j, k;
-	Route *c = new Route[high-low];
-    i = low;
-    k = low;
-    j = mid + 1;
-	
-    while (i <= mid && j <= high)
-    {
-        if (a[i].getDistance() < a[j].getDistance())
-        {
-            c[k] = a[i];
-            k++;
-            i++;
-        }
-        else
-        {
-            c[k] = a[j];
-            k++;
-            j++;
-        }
-    }
-    while (i <= mid)
-    {
-        c[k] = a[i];
-        k++;
-        i++;
-    }
-    while (j <= high)
-    {
-        c[k] = a[j];
-        k++;
-        j++;
-    }
-    for (i = low; i < k; i++)
-    {
-        a[i] = c[i];
-    }
-}*/
-
 int main() {
-
-
-	//set up city array
-	//generate routes
-
 	//while loop
 	//pair best parents
 	//cross parents
 	//check for best children
 	//half best parents, half best children
 
-	//loop ends when 50 successive generations do not generate better child.
+	//loop ends when NUM_GENERATIONS successive generations do not generate better child.
 
 	
 	
-//create city array
+	//create city array
 	ifstream myReadFile;
 	string nextData;
 	City theCityArray[NUM_CITIES];
-
-	Route p1 = Route();
-	Route p2 = Route();
-	Route p3 = Route();
+	
+	//Seed random number generator 
 	srand(time(NULL));
 
 	int index;
@@ -139,7 +70,7 @@ int main() {
 	int col = 1;
 	int i = 0;
 
-	myReadFile.open("29C27603.txt");
+	myReadFile.open(FILE_NAME);
 
 	if(myReadFile.is_open()){
 		while(myReadFile >> nextData){
@@ -168,7 +99,7 @@ int main() {
 	}
 
 	clock_t stopTime, startTime;
-	startTime = clock();
+	startTime = clock();  //Start the timer
 	//fill routes
 	for (int i=0; i<NUM_ROUTES; i++)//for each route
 	{
@@ -238,27 +169,9 @@ int main() {
 
 	cout << bestRoute->getDistance() << endl;
 
-	/*
-	TESTING GA CX	
-	Route test;
-	
-	for (int i = 0; i < 29; i++){
-		cout << routeAry[0].getCityAt(i).getId() << ",";
-	}
-	cout << "\nRoute 2\n";
-	for (int i = 0; i < 29; i++){
-		cout << routeAry[1].getCityAt(i).getId() << ",";
-	}
-	cout << endl;
-	test = edgeRecombination(routeAry[0], routeAry[1]);
-
-	cout << "\nRoute A Rating = " << routeAry[0].getDistance();
-	cout << "\nRoute B Rating = " << routeAry[1].getDistance();
-	cout << "\nRoute C Rating = " << test.getDistance() << endl;*/
-
 	stopTime = clock();
 	float seconds = (float)(stopTime - startTime) / CLOCKS_PER_SEC;
-	cout << endl << seconds << endl;
+	cout << endl << "Solution took: " << seconds << " second" << endl;
 
 	delete [] routeAry;
 	delete [] tempRouteAry;
