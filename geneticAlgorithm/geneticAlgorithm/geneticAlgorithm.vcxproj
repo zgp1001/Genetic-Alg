@@ -78,6 +78,7 @@
   <ItemGroup>
     <Text Include="..\29C27603.txt" />
     <Text Include="..\29CitiesData.txt" />
+    <Text Include="51City426.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

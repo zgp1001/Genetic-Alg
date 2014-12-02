@@ -21,10 +21,10 @@ City::City(string n, int i, float xIn, float yIn){
 }
 
 //assignment operator overload (makes route simpler)
-City City::operator=(City toBeCopied){
+City& City::operator=(City toBeCopied){
 	if (this != &toBeCopied){
 		this->id = toBeCopied.id;
-		this->name = toBeCopied.name;
+		//this->name = toBeCopied.getName();
 		this->x = toBeCopied.x;
 		this->y = toBeCopied.y;
 	}

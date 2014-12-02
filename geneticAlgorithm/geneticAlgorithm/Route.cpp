@@ -21,8 +21,8 @@ Route::Route(City* newCities, int numOfCities){
 
 //copy constructor
 Route::Route(Route& toBeCopied){
-	setNumCities(toBeCopied.numCities);
-	setCities(toBeCopied.cities); 
+	setNumCities(toBeCopied.getNumCities());
+	setCities(toBeCopied.getCities()); 
 }
 /*
 //Destructor
@@ -33,8 +33,8 @@ Route::~Route(){
 //assignment operator overload
 Route& Route::operator=(const Route& toBeCopied){
 	if (this != &toBeCopied){
-		this->setNumCities(toBeCopied.numCities);
-		this->setCities(toBeCopied.cities);
+		this->setNumCities(toBeCopied.getNumCities());
+		this->setCities(toBeCopied.getCities());
 	}
 	return *this;
 }

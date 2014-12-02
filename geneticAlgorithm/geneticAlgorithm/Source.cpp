@@ -8,14 +8,9 @@
 using namespace std;
 
 const int NUM_GENERATION_STOPPER = 100;	
-const int NUM_ROUTES = 50;		//Size of parent population (usually ~number of cities ^2 is a good starting point) 
+const int NUM_ROUTES = 100;		//Size of parent population (usually ~number of cities ^2 is a good starting point) 
 const int NUM_CITIES = 29;		//Must be set equal to data set in string FILE_NAME
 const string FILE_NAME = "29C27603.txt";
-
-/*
-* C++ Program to Implement Merge Sort
-*/
-void sortRouteArray();
 
 void bubbleSort(Route *a)
 {
@@ -33,15 +28,15 @@ void bubbleSort(Route *a)
 		}
 	}
 
-	for (int i = 0; i < NUM_ROUTES - 1; i++)
+	/*for (int i = 0; i < NUM_ROUTES - 1; i++)
 		cout << a[i].getDistance() << endl;
-	cout << endl << endl << endl << endl;
+	cout << endl << endl << endl << endl;*/
 }
 
 
-void SWAP(Route a, Route b)
+void swap(Route* a, Route* b)
 {
-	Route temp;
+	Route* temp;
 	temp = a;
 	a = b;
 	b = temp;
@@ -54,7 +49,7 @@ void merge(Route *a, int size, Route *temp) {
 	int it = 0;
 
 	while (i1 < size / 2 && i2 < size) {
-		if (a[i1].getDistance() < a[i2].getDistance()) {
+		if (a[i1].getDistance() <= a[i2].getDistance()) {
 			temp[it] = a[i1];
 			i1 += 1;
 		}
@@ -76,19 +71,18 @@ void merge(Route *a, int size, Route *temp) {
 		it++;
 	}
 
-	for (int i = 0; i < NUM_ROUTES; i++)
+	for (int i = 0; i < size; i++){
 		a[i] = temp[i];
-
+	}
 }
 
 void mergesort_serial(Route *a, int size, Route *temp) {
-	int i;
 
 	if (size <= 2) {
-		if (a[0].getDistance() > a[1].getDistance())
+		if (a[0].getDistance() <= a[1].getDistance())
 			return;
 		else {
-			SWAP(a[0], a[1]);
+			swap(a[0], a[1]);
 			return;
 		}
 	}
@@ -207,19 +201,18 @@ int main() {
 	while (generationCounter < NUM_GENERATION_STOPPER)
 	{
 		Route temp[NUM_ROUTES];
+		//sort routes
+		//bubbleSort(routeAry);
 		mergesort_parallel_omp(routeAry, NUM_ROUTES, temp, 4);
+		for (int i = 0; i < NUM_ROUTES; i++){
+			cout << routeAry[i].getDistance() << endl;
+		}
+		cout << "***************************************";
 		//create new generation
 		for (int i = 0; i < NUM_ROUTES/2; i++)
 		{
 			tempRouteAry[i] = edgeRecombination(routeAry[i*2], routeAry[(i*2)+1]);
 		}
-
-		//sort routes
-		//Route temp[NUM_ROUTES];
-		//mergesort_parallel_omp(routeAry, NUM_ROUTES, temp, 4);
-		//bubbleSort(routeAry);
-
-
 
 		for (int j = NUM_ROUTES/2; j < NUM_ROUTES; j++)
 		{

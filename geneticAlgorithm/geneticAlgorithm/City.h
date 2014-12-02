@@ -14,7 +14,7 @@ public:
 	City(string, int, float, float);	//All Parameters
 	
 	//assignment operator overload
-	City operator=(City);
+	City& operator=(City);
 
 	//Setters
 	void setX(float);
