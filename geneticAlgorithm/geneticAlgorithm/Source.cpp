@@ -8,9 +8,9 @@
 using namespace std;
 
 const int NUM_GENERATION_STOPPER = 100;	
-const int NUM_ROUTES = 3000;		//Size of parent population (usually ~number of cities ^2 is a good starting point) 
-const int NUM_CITIES = 51;		//Must be set equal to data set in string FILE_NAME
-const string FILE_NAME = "51City426.txt";
+const int NUM_ROUTES = 50;		//Size of parent population (usually ~number of cities ^2 is a good starting point) 
+const int NUM_CITIES = 29;		//Must be set equal to data set in string FILE_NAME
+const string FILE_NAME = "29C27603.txt";
 
 /*
 * C++ Program to Implement Merge Sort
@@ -36,6 +36,88 @@ void bubbleSort(Route *a)
 	for (int i = 0; i < NUM_ROUTES - 1; i++)
 		cout << a[i].getDistance() << endl;
 	cout << endl << endl << endl << endl;
+}
+
+
+void SWAP(Route a, Route b)
+{
+	Route temp;
+	temp = a;
+	a = b;
+	b = temp;
+
+}
+
+void merge(Route *a, int size, Route *temp) {
+	int i1 = 0;
+	int i2 = size / 2;
+	int it = 0;
+
+	while (i1 < size / 2 && i2 < size) {
+		if (a[i1].getDistance() < a[i2].getDistance()) {
+			temp[it] = a[i1];
+			i1 += 1;
+		}
+		else {
+			temp[it] = a[i2];
+			i2 += 1;
+		}
+		it += 1;
+	}
+
+	while (i1 < size / 2) {
+		temp[it] = a[i1];
+		i1++;
+		it++;
+	}
+	while (i2 < size) {
+		temp[it] = a[i2];
+		i2++;
+		it++;
+	}
+
+	for (int i = 0; i < NUM_ROUTES; i++)
+		a[i] = temp[i];
+
+}
+
+void mergesort_serial(Route *a, int size, Route *temp) {
+	int i;
+
+	if (size <= 2) {
+		if (a[0].getDistance() > a[1].getDistance())
+			return;
+		else {
+			SWAP(a[0], a[1]);
+			return;
+		}
+	}
+
+	mergesort_serial(a, size / 2, temp);
+	mergesort_serial(a + size / 2, size - size / 2, temp);
+	merge(a, size, temp);
+}
+
+
+
+void mergesort_parallel_omp
+(Route *a, int size, Route *temp, int threads) {
+
+	if (threads == 1) {
+		mergesort_serial(a, size, temp);
+	}
+	else if (threads > 1) {
+#pragma omp parallel sections
+		{
+#pragma omp section
+			mergesort_parallel_omp(a, size / 2, temp, threads / 2);
+#pragma omp section
+			mergesort_parallel_omp(a + size / 2, size - size / 2,
+				temp + size / 2, threads - threads / 2);
+		}
+
+		merge(a, size, temp);
+	} // threads > 1
 }
 
 int main() {
@@ -124,6 +206,8 @@ int main() {
 	
 	while (generationCounter < NUM_GENERATION_STOPPER)
 	{
+		Route temp[NUM_ROUTES];
+		mergesort_parallel_omp(routeAry, NUM_ROUTES, temp, 4);
 		//create new generation
 		for (int i = 0; i < NUM_ROUTES/2; i++)
 		{
@@ -131,8 +215,11 @@ int main() {
 		}
 
 		//sort routes
-		//mergesort(routeAry, 0, NUM_CITIES - 1);
-		bubbleSort(routeAry);
+		//Route temp[NUM_ROUTES];
+		//mergesort_parallel_omp(routeAry, NUM_ROUTES, temp, 4);
+		//bubbleSort(routeAry);
+
+
 
 		for (int j = NUM_ROUTES/2; j < NUM_ROUTES; j++)
 		{
