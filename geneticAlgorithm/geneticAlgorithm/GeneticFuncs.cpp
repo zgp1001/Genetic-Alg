@@ -25,10 +25,8 @@ Route edgeRecombination(const Route &a, const Route &b) {
 
 	//Begin implemention of cross-over 
 	int numCities = a.getNumCities();  
-	int **connections = new int*[numCities*2];  //This will hold the possible connections which is the Union of the parent tours
+	int **connections = new int*[numCities];  //This will hold the possible connections which is the Union of the parent tours
 	int possibleConnections = 5;  //Every city can only possibly be connected to 4 other cities when combining parents (5th field is for ID)
-
-	// ADD CITIES FROM ROUTE B TO CONNECTIONS ARRAY AS WELL 
 
 	for (int i = 0; i < numCities; i++){
 		connections[i] = new int[numCities];
@@ -73,15 +71,6 @@ Route edgeRecombination(const Route &a, const Route &b) {
 				connections[i][l] = NULL;
 		}
 	}
-
-	////Print connections array (for testing) 
-	//for (int i = 0; i < numCities; i++){
-	//	cout << connections[i][0] << ": ";
-	//	for (int j = 1; j < 5; j++){
-	//		cout << connections[i][j] << " ";
-	//	}
-	//	cout << "\n";
-	//}
 
 	//Pick a random start city from the Routes 
 	int index;
@@ -183,10 +172,11 @@ Route edgeRecombination(const Route &a, const Route &b) {
 		}
 	}
 
-	/*cout << "Child Route\n";
-	for (int i = 0; i < numCities; i++)
-		cout << child.getCityAt(i).getId() << ",";
-	cout << endl;*/
+	//Delete dynamically created memory to avoid leaks
+	for (int i = 0; i < numCities; i++){
+		delete [] connections[i];
+	}
+	delete [] connections;
 
 	return child;  
 } 

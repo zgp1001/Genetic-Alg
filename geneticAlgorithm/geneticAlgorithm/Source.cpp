@@ -8,11 +8,12 @@
 using namespace std;
 
 const int NUM_GENERATION_STOPPER = 100;	
-const int NUM_ROUTES = 1000;		//Size of parent population (usually ~number of cities ^2 is a good starting point) 
-const int NUM_CITIES = 51;			//Must be set equal to data set in string FILE_NAME
-const string FILE_NAME = "51City426.txt";
-const int NUM_THREADS = 1; 
+const int NUM_ROUTES = 100;		//Size of parent population (usually ~number of cities ^2 is a good starting point) 
+const int NUM_CITIES = 29;			//Must be set equal to data set in string FILE_NAME
+const string FILE_NAME = "29C27603.txt";	//Name of TSPLIB formatted data file 
+const int NUM_THREADS = 4;			//Controls the level of parallel used by the Merge Sort 
 
+//Bubble sort 
 void bubbleSort(Route *a)
 {
 	Route swap;
@@ -41,7 +42,7 @@ void swap(Route* a, Route* b)
 	temp = a;
 	a = b;
 	b = temp;
-
+	delete temp; 
 }
 
 /*
@@ -128,8 +129,6 @@ int main() {
 	//half best parents, half best children
 
 	//loop ends when NUM_GENERATIONS successive generations do not generate better child.
-
-	
 	
 	//create city array
 	ifstream myReadFile;
@@ -148,6 +147,7 @@ int main() {
 	float currentBestChild = 0;
 	Route * routeAry = new Route[NUM_ROUTES];
 	Route * tempRouteAry = new Route[NUM_ROUTES];
+	Route temp[NUM_ROUTES];
 
 	int col = 1;
 	int i = 0;
@@ -202,43 +202,26 @@ int main() {
 		routeAry[i].setNumCities(NUM_CITIES);//can probably delete (not sure)
 	}
 
-	
+	mergesort_parallel_omp(routeAry, NUM_ROUTES, temp, NUM_THREADS);
+	currentBestChild = routeAry[0].getDistance();
+	cout << "Initial best parent: " << currentBestChild << endl;
 	
 	while (generationCounter < NUM_GENERATION_STOPPER)
 	{
-		Route temp[NUM_ROUTES];
-		//sort routes
-		//bubbleSort(routeAry);
-		mergesort_parallel_omp(routeAry, NUM_ROUTES, temp, NUM_THREADS);
 		//create new generation
 		for (int i = 0; i < NUM_ROUTES/2; i++)
 		{
-			tempRouteAry[i] = edgeRecombination(routeAry[i*2], routeAry[(i*2)+1]);
+			routeAry[(NUM_ROUTES/2)+i] = edgeRecombination(routeAry[i*2], routeAry[(i*2)+1]);
 		}
 
-		for (int j = NUM_ROUTES/2; j < NUM_ROUTES; j++)
-		{
-			//routeAry.sort(); a sort function would be nice smallest distance first
-			tempRouteAry[j] = routeAry[j-(NUM_ROUTES/2)];//should be parent. find best parents idk
-		}
+		//sort routes
+		//bubbleSort(routeAry);
+		mergesort_parallel_omp(routeAry, NUM_ROUTES, temp, NUM_THREADS);
 
-		//update Route ary
-		for (int l = 0; l < NUM_ROUTES; l++)
-		{
-			routeAry[l] = tempRouteAry[l];
-		}
-
-		//find best route
-		bestRoute = routeAry;
-		for (int k = 1; k < NUM_ROUTES; k++)
-		{
-			if (routeAry->getDistance() < bestRoute->getDistance())
-			{
-				bestRoute = &routeAry[k];
-			}
-		}
-
-		if(bestRoute->getDistance() < currentBestChild)//test for better child
+		//Best route will be the first one in RouteAry after sorting 
+		bestRoute = &routeAry[0];
+		//cout << bestRoute->getDistance() << endl;
+		if(bestRoute->getDistance() < currentBestChild)  //test for better child
 		{
 			generationCounter = 0;
 			currentBestChild = bestRoute->getDistance();
@@ -249,7 +232,7 @@ int main() {
 		}
 	}
 
-	cout << bestRoute->getDistance() << endl;
+	cout << currentBestChild << endl;
 
 	stopTime = clock();
 	float seconds = (float)(stopTime - startTime) / CLOCKS_PER_SEC;
