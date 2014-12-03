@@ -8,9 +8,10 @@
 using namespace std;
 
 const int NUM_GENERATION_STOPPER = 100;	
-const int NUM_ROUTES = 100;		//Size of parent population (usually ~number of cities ^2 is a good starting point) 
-const int NUM_CITIES = 29;		//Must be set equal to data set in string FILE_NAME
-const string FILE_NAME = "29C27603.txt";
+const int NUM_ROUTES = 1000;		//Size of parent population (usually ~number of cities ^2 is a good starting point) 
+const int NUM_CITIES = 51;			//Must be set equal to data set in string FILE_NAME
+const string FILE_NAME = "51City426.txt";
+const int NUM_THREADS = 1; 
 
 void bubbleSort(Route *a)
 {
@@ -43,6 +44,11 @@ void swap(Route* a, Route* b)
 
 }
 
+/*
+Merge Sort adapted from code found here (https://github.com/cjenkin1/parallel-j/blob/master/OpenMP/mergeSort-omp.c) 
+
+Code needed to be changed a bit to work for our problem. 
+*/
 void merge(Route *a, int size, Route *temp) {
 	int i1 = 0;
 	int i2 = size / 2;
@@ -203,11 +209,7 @@ int main() {
 		Route temp[NUM_ROUTES];
 		//sort routes
 		//bubbleSort(routeAry);
-		mergesort_parallel_omp(routeAry, NUM_ROUTES, temp, 4);
-		for (int i = 0; i < NUM_ROUTES; i++){
-			cout << routeAry[i].getDistance() << endl;
-		}
-		cout << "***************************************";
+		mergesort_parallel_omp(routeAry, NUM_ROUTES, temp, NUM_THREADS);
 		//create new generation
 		for (int i = 0; i < NUM_ROUTES/2; i++)
 		{
