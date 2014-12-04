@@ -1,7 +1,5 @@
 #include "Route.h"
-#include <iostream> 
 #include <math.h>
-using namespace std;
 
 //no-arg Constructor
 Route::Route(){
@@ -83,22 +81,9 @@ void Route::addCity(City  c){
 City* Route::getCities() const{ return cities; }
 City Route::getCityAt(int x) const { return cities[x]; }
 City Route::getCityByID(int id) const {
-	City ret; 
-	bool flag = false; 
-	for (int i = 0; i < numCities; i++){
-		if (cities[i].getId() == id)
-		{
-			ret = cities[i];
-			flag = true;
-		}
-	}
-	if (!flag){
-		cout << "Did not find a city with ID of " << id << "\n";
-		for (int i = 0; i < numCities; i++){
-			cout << i << ". " << cities[i].getId() << "\n";
-		}
-	}
-	return ret;
+	for (int i = 0; i < this->getNumCities(); i++)
+		if (this->getCityAt(i).getId() == id)
+			return this->getCityAt(i);
 }
 int Route::getNumCities() const { return numCities; }
 

@@ -5,14 +5,13 @@
 #include <fstream>
 #include <string.h>
 #include <time.h>
-#include <omp.h> 
 using namespace std;
 
 const int NUM_GENERATION_STOPPER = 100;	
 const int NUM_ROUTES = 100;		//Size of parent population (usually ~number of cities ^2 is a good starting point) 
 const int NUM_CITIES = 29;			//Must be set equal to data set in string FILE_NAME
 const string FILE_NAME = "29C27603.txt";	//Name of TSPLIB formatted data file 
-const int NUM_THREADS = 4;			//Controls the level of parallel (this is assigned to omp_set_num_threads)
+const int NUM_THREADS = 4;			//Controls the level of parallel used by the Merge Sort 
 
 //Bubble sort 
 void bubbleSort(Route *a)
@@ -43,6 +42,7 @@ void swap(Route* a, Route* b)
 	temp = a;
 	a = b;
 	b = temp;
+	delete temp; 
 }
 
 /*
@@ -108,8 +108,7 @@ void mergesort_parallel_omp
 		mergesort_serial(a, size, temp);
 	}
 	else if (threads > 1) {
-
-#pragma omp sections
+#pragma omp parallel sections
 		{
 #pragma omp section
 			mergesort_parallel_omp(a, size / 2, temp, threads / 2);
@@ -118,6 +117,7 @@ void mergesort_parallel_omp
 				temp + size / 2, threads - threads / 2);
 		}
 
+		merge(a, size, temp);
 	} // threads > 1
 }
 
@@ -138,16 +138,13 @@ int main() {
 	//Seed random number generator 
 	srand(time(NULL));
 
-	//Set Num-Threads equal to the global NUM_THREADS variable
-	omp_set_num_threads(NUM_THREADS);
-
 	int index;
 	City tempCityAry[NUM_CITIES];
 	Route tempRoute = Route(tempCityAry, NUM_CITIES);
 
 	int generationCounter = 0;//counts the number of generations since better child was found
 	Route * bestRoute;
-	float currentBestChild;
+	float currentBestChild = 0;
 	Route * routeAry = new Route[NUM_ROUTES];
 	Route * tempRouteAry = new Route[NUM_ROUTES];
 	Route temp[NUM_ROUTES];
@@ -212,7 +209,6 @@ int main() {
 	while (generationCounter < NUM_GENERATION_STOPPER)
 	{
 		//create new generation
-//#pragma omp parallel  
 		for (int i = 0; i < NUM_ROUTES/2; i++)
 		{
 			routeAry[(NUM_ROUTES/2)+i] = edgeRecombination(routeAry[i*2], routeAry[(i*2)+1]);
@@ -220,7 +216,7 @@ int main() {
 
 		//sort routes
 		//bubbleSort(routeAry);
-		mergesort_parallel_omp(routeAry, NUM_ROUTES, temp, 1);
+		mergesort_parallel_omp(routeAry, NUM_ROUTES, temp, NUM_THREADS);
 
 		//Best route will be the first one in RouteAry after sorting 
 		bestRoute = &routeAry[0];
