@@ -9,9 +9,9 @@
 using namespace std;
 
 const int NUM_GENERATION_STOPPER = 100;	
-const int NUM_ROUTES = 1000;		//Size of parent population (usually ~number of cities ^2 is a good starting point) 
-const int NUM_CITIES = 51;			//Must be set equal to data set in string FILE_NAME
-const string FILE_NAME = "51City426.txt";	//Name of TSPLIB formatted data file 
+const int NUM_ROUTES = 200;		//Size of parent population (usually ~number of cities ^2 is a good starting point) 
+const int NUM_CITIES = 29;			//Must be set equal to data set in string FILE_NAME
+const string FILE_NAME = "29C27603.txt";	//Name of TSPLIB formatted data file 
 const int NUM_THREADS = 4;			//Controls the level of parallel (OMP_SET_NUM_THREADS uses this value)  
 
 //Bubble sort 
@@ -150,6 +150,7 @@ int main() {
 	Route * bestRoute;
 	float currentBestChild = 0;
 	Route * routeAry = new Route[NUM_ROUTES];
+	Route * nextGeneration = new Route[NUM_ROUTES/2];
 	Route * tempRouteAry = new Route[NUM_ROUTES];
 	Route temp[NUM_ROUTES];
 
@@ -213,10 +214,15 @@ int main() {
 	while (generationCounter < NUM_GENERATION_STOPPER)
 	{
 		//create new generation
+		//#pragma omp parallel for
 		for (int i = 0; i < NUM_ROUTES/2; i++)
 		{
-			routeAry[(NUM_ROUTES/2)+i] = edgeRecombination(routeAry[i*2], routeAry[(i*2)+1]);
+			nextGeneration[i] = edgeRecombination(routeAry[i*2], routeAry[(i*2)+1]);
 		}
+
+		//#pragma omp parallel for
+		for(int i = 0; i < NUM_ROUTES/2; i++)
+			routeAry[(NUM_ROUTES/2)+i] = nextGeneration[i];
 
 		//sort routes
 		//bubbleSort(routeAry);

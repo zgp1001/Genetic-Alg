@@ -1,4 +1,5 @@
 #include "Route.h"
+#include <omp.h> 
 #include <math.h>
 
 //no-arg Constructor
@@ -60,6 +61,7 @@ void Route::setNumCities(int newNum){
 			if (numCities > 0){
 				City* temp = cities;
 				cities = new City[newNum];
+				//#pragma omp parallel for 
 				for (int i = 0; i < numCities; i++){	//for every existing city
 					cities[i] = temp[i];//copy over city into new array
 				}
@@ -81,9 +83,12 @@ void Route::addCity(City  c){
 City* Route::getCities() const{ return cities; }
 City Route::getCityAt(int x) const { return cities[x]; }
 City Route::getCityByID(int id) const {
+	City ret;
+	//#pragma omp parallel for 
 	for (int i = 0; i < this->getNumCities(); i++)
 		if (this->getCityAt(i).getId() == id)
-			return this->getCityAt(i);
+			ret = this->getCityAt(i);
+	return ret;
 }
 int Route::getNumCities() const { return numCities; }
 
