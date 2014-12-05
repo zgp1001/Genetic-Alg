@@ -151,7 +151,6 @@ int main() {
 	float currentBestChild = 0;
 	Route * routeAry = new Route[NUM_ROUTES];
 	Route * nextGeneration = new Route[NUM_ROUTES/2];
-	Route * tempRouteAry = new Route[NUM_ROUTES];
 	Route temp[NUM_ROUTES];
 
 	int col = 1;
@@ -214,13 +213,13 @@ int main() {
 	while (generationCounter < NUM_GENERATION_STOPPER)
 	{
 		//create new generation
-		//#pragma omp parallel for
+		#pragma omp parallel for
 		for (int i = 0; i < NUM_ROUTES/2; i++)
 		{
 			nextGeneration[i] = edgeRecombination(routeAry[i*2], routeAry[(i*2)+1]);
 		}
 
-		//#pragma omp parallel for
+		#pragma omp parallel for
 		for(int i = 0; i < NUM_ROUTES/2; i++)
 			routeAry[(NUM_ROUTES/2)+i] = nextGeneration[i];
 
@@ -249,7 +248,7 @@ int main() {
 	cout << endl << "Solution took: " << seconds << " second" << endl;
 
 	delete [] routeAry;
-	delete [] tempRouteAry;
+	delete [] nextGeneration;
 	
 	system("pause");
 	return 0;

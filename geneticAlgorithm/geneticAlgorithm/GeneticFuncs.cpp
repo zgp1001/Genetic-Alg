@@ -1,7 +1,6 @@
 #include "GeneticFuncs.h"
 #include <iostream> 
 #include <algorithm> // for std::find
-#include <iterator>  //for std::begin and end
 using namespace std;
 
 Route edgeRecombination(const Route &a, const Route &b);
@@ -36,6 +35,7 @@ Route edgeRecombination(const Route &a, const Route &b) {
 	for (int i = 0; i < numCities; i++){
 		int toFind = connections[i][0];		 //ID to search for in this iteration 
 		int vals[4] = { 0, 0, 0, 0 };		//Holds connections found for this ID 
+		#pragma omp parallel for
 		for (int j = 0; j < numCities; j++){
 			if (a.getCityAt(j).getId() == toFind)
 				if (j == numCities - 1){
@@ -91,6 +91,7 @@ Route edgeRecombination(const Route &a, const Route &b) {
 	}
 
 	//Now remove references to this city from other cities 
+	#pragma omp parallel for
 	for (int cities = 0; cities < numCities; cities++){
 		for (int links = 1; links < possibleConnections; links++){
 			if (connections[cities][links] == bestId)
@@ -164,6 +165,7 @@ Route edgeRecombination(const Route &a, const Route &b) {
 			child.addCity(a.getCityByID(bestId));
 		}
 		//Now remove references to this city from other cities 
+		#pragma omp parallel for
 		for (int cities = 0; cities < numCities; cities++){
 			for (int links = 1; links < possibleConnections; links++){
 				if (connections[cities][links] == bestId)
