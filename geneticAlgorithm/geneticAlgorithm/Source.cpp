@@ -3,15 +3,16 @@
 #include "GeneticFuncs.h"	//Holds GA Functions
 #include <iostream> 
 #include <fstream>
+#include <omp.h> 
 #include <string.h>
 #include <time.h>
 using namespace std;
 
 const int NUM_GENERATION_STOPPER = 100;	
-const int NUM_ROUTES = 100;		//Size of parent population (usually ~number of cities ^2 is a good starting point) 
-const int NUM_CITIES = 29;			//Must be set equal to data set in string FILE_NAME
-const string FILE_NAME = "29C27603.txt";	//Name of TSPLIB formatted data file 
-const int NUM_THREADS = 4;			//Controls the level of parallel used by the Merge Sort 
+const int NUM_ROUTES = 1000;		//Size of parent population (usually ~number of cities ^2 is a good starting point) 
+const int NUM_CITIES = 51;			//Must be set equal to data set in string FILE_NAME
+const string FILE_NAME = "51City426.txt";	//Name of TSPLIB formatted data file 
+const int NUM_THREADS = 4;			//Controls the level of parallel (OMP_SET_NUM_THREADS uses this value)  
 
 //Bubble sort 
 void bubbleSort(Route *a)
@@ -116,7 +117,6 @@ void mergesort_parallel_omp
 			mergesort_parallel_omp(a + size / 2, size - size / 2,
 				temp + size / 2, threads - threads / 2);
 		}
-
 		merge(a, size, temp);
 	} // threads > 1
 }
@@ -135,6 +135,10 @@ int main() {
 	string nextData;
 	City theCityArray[NUM_CITIES];
 	
+	//Set OMP Num Threads 
+	omp_set_num_threads(NUM_THREADS);
+	omp_set_nested(1);
+
 	//Seed random number generator 
 	srand(time(NULL));
 
