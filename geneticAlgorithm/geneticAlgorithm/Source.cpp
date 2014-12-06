@@ -1,3 +1,19 @@
+/*************************
+TSP GA Group 
+__________________________
+
+Alex Lee 
+Zachary Petrusch 
+Eric McAlpine 
+Nick Benedict
+__________________________
+This code executes a genetic algorithm in parallel, using OpenMP to solve the Traveling Salesman Problem. 
+
+Instructions on running and modifying the project can be found in the User and Technical Documents
+___________________________
+
+**************************/
+
 #include "City.h"			//Defines City Class
 #include "Route.h"			//Defines Route Class
 #include "GeneticFuncs.h"	//Holds GA Functions
@@ -8,13 +24,13 @@
 #include <time.h>
 using namespace std;
 
-const int NUM_GENERATION_STOPPER = 100;	
-const int NUM_ROUTES = 200;		//Size of parent population (usually ~number of cities ^2 is a good starting point) 
-const int NUM_CITIES = 29;			//Must be set equal to data set in string FILE_NAME
-const string FILE_NAME = "29C27603.txt";	//Name of TSPLIB formatted data file 
+const int NUM_GENERATION_STOPPER = 10;	
+const int NUM_ROUTES = 1000;		//Size of parent population (usually ~number of cities ^2 is a good starting point) 
+const int NUM_CITIES = 51;			//Must be set equal to data set in string FILE_NAME
+const string FILE_NAME = "51City426.txt";	//Name of TSPLIB formatted data file 
 const int NUM_THREADS = 4;			//Controls the level of parallel (OMP_SET_NUM_THREADS uses this value)  
 
-//Bubble sort 
+//Bubble sort for fun
 void bubbleSort(Route *a)
 {
 	Route swap;
@@ -47,9 +63,7 @@ void swap(Route* a, Route* b)
 }
 
 /*
-Merge Sort adapted from code found here (https://github.com/cjenkin1/parallel-j/blob/master/OpenMP/mergeSort-omp.c) 
-
-Code needed to be changed a bit to work for our problem. 
+Merge Sort adapted from code found here (https://github.com/cjenkin1/parallel-j/blob/master/OpenMP/mergeSort-omp.c)  
 */
 void merge(Route *a, int size, Route *temp) {
 	int i1 = 0;
@@ -122,14 +136,6 @@ void mergesort_parallel_omp
 }
 
 int main() {
-	//while loop
-	//pair best parents
-	//cross parents
-	//check for best children
-	//half best parents, half best children
-
-	//loop ends when NUM_GENERATIONS successive generations do not generate better child.
-	
 	//create city array
 	ifstream myReadFile;
 	string nextData;
@@ -142,20 +148,23 @@ int main() {
 	//Seed random number generator 
 	srand(time(NULL));
 
-	int index;
-	City tempCityAry[NUM_CITIES];
-	Route tempRoute = Route(tempCityAry, NUM_CITIES);
+	int index;		//Used to create random routes 
+	City tempCityAry[NUM_CITIES];	//Temp city array used for temporary storage of Cities 
+	Route tempRoute = Route(tempCityAry, NUM_CITIES);	//Temp route array used for temporary storage of routes 
 
-	int generationCounter = 0;//counts the number of generations since better child was found
-	Route * bestRoute;
-	float currentBestChild = 0;
-	Route * routeAry = new Route[NUM_ROUTES];
-	Route * nextGeneration = new Route[NUM_ROUTES/2];
-	Route temp[NUM_ROUTES];
+	int generationCounter = 0;	//counts the number of generations since better child was found
+	Route * bestRoute;			//Stores the current best route 
+	float currentBestChild = 0;	//Stores the fitness score (Distance of route) of the best route
+	Route * routeAry = new Route[NUM_ROUTES];	//Array that stores the population 
+	Route * nextGeneration = new Route[NUM_ROUTES/2];	//Array that holds new population until they can be placed into routeAry
+	Route temp[NUM_ROUTES];	//Used for merge sort
+	int iterations = 0;		//Tracks the number of iterations the run took (iteration = 1 cycle through GA While loop)
 
+	/****************************************
+	Read in the data from the file specified 
+	*****************************************/
 	int col = 1;
 	int i = 0;
-
 	myReadFile.open(FILE_NAME);
 
 	if(myReadFile.is_open()){
@@ -184,6 +193,13 @@ int main() {
 		cout << "File failed to open\n";
 	}
 
+	/****************************************
+	End reading in data 
+	*****************************************/
+
+	/****************************************
+	Initialize random population
+	*****************************************/
 	clock_t stopTime, startTime;
 	startTime = clock();  //Start the timer
 	//fill routes
@@ -205,48 +221,72 @@ int main() {
 		routeAry[i] = tempRoute;	//assign route into array
 		routeAry[i].setNumCities(NUM_CITIES);//can probably delete (not sure)
 	}
+	/****************************************
+	End creation of population 
+	*****************************************/
 
+	//Sort the initia population and find the initial best solution 
 	mergesort_parallel_omp(routeAry, NUM_ROUTES, temp, NUM_THREADS);
 	currentBestChild = routeAry[0].getDistance();
-	cout << "Initial best parent: " << currentBestChild << endl;
-	
-	while (generationCounter < NUM_GENERATION_STOPPER)
+	cout << "Initial best parent: " << currentBestChild << endl; //Print the best child of Gen I
+
+	//Open a parallel region 
+	//The GA runs in parallel with the cross-over function called in parallel to create the "next" generation faster
+	#pragma omp parallel 
 	{
-		//create new generation
-		#pragma omp parallel for
-		for (int i = 0; i < NUM_ROUTES/2; i++)
+		//Continues to run the GA until no improvement for NUM_GENERATION_STOPPER iterations
+		while (generationCounter < NUM_GENERATION_STOPPER) 
 		{
-			nextGeneration[i] = edgeRecombination(routeAry[i*2], routeAry[(i*2)+1]);
-		}
+			//create new generation 
+			#pragma omp for
+			for (int i = 0; i < NUM_ROUTES / 2; i++)
+			{
+				nextGeneration[i] = edgeRecombination(routeAry[i * 2], routeAry[(i * 2) + 1]);
+			}
 
-		#pragma omp parallel for
-		for(int i = 0; i < NUM_ROUTES/2; i++)
-			routeAry[(NUM_ROUTES/2)+i] = nextGeneration[i];
+			//Copy the newly generated routes into the population array, replacing the 50% worst solutions 
+			#pragma omp for
+			for (int i = 0; i < NUM_ROUTES / 2; i++)
+				routeAry[(NUM_ROUTES / 2) + i] = nextGeneration[i];
 
-		//sort routes
-		//bubbleSort(routeAry);
-		mergesort_parallel_omp(routeAry, NUM_ROUTES, temp, NUM_THREADS);
+			//Allow one thread to update all the GA variables and call the sort 
+			#pragma omp single
+			{
+				iterations++;  //Increment iterations 
 
-		//Best route will be the first one in RouteAry after sorting 
-		bestRoute = &routeAry[0];
-		//cout << bestRoute->getDistance() << endl;
-		if(bestRoute->getDistance() < currentBestChild)  //test for better child
-		{
-			generationCounter = 0;
-			currentBestChild = bestRoute->getDistance();
-		}
-		else
-		{
-			generationCounter++;
+				//Sort the arrays so that the best solutions are at the top of the population array 
+				//bubbleSort(routeAry);
+				mergesort_parallel_omp(routeAry, NUM_ROUTES, temp, NUM_THREADS);
+
+				//Best route will be the first one in RouteAry after sorting 
+				bestRoute = &routeAry[0];
+
+				//cout << bestRoute->getDistance() << endl;
+				//See if the best solution is better than it was last generation, if not increment the generationCounter
+				//When generationCounter exceeds NUM_GENERATION_STOPPER the GA stops executing 
+				if (bestRoute->getDistance() < currentBestChild)  //test for better child
+				{
+					generationCounter = 0;
+					currentBestChild = bestRoute->getDistance();
+				}
+				else
+				{
+					generationCounter++;
+				}
+			}
 		}
 	}
 
-	cout << currentBestChild << endl;
-
-	stopTime = clock();
+	//Stop the timer and get how long the program took to execute
+	stopTime = clock(); 
 	float seconds = (float)(stopTime - startTime) / CLOCKS_PER_SEC;
-	cout << endl << "Solution took: " << seconds << " second" << endl;
 
+	//Print the stats for the run 
+	cout << "Solution = " << currentBestChild << endl;
+	cout << endl << "Solution took: " << seconds << " seconds" << endl;
+	cout << "Took " << iterations << " iterations\n";
+
+	//Delete dynamic memory 
 	delete [] routeAry;
 	delete [] nextGeneration;
 	

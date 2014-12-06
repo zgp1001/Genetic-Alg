@@ -1,6 +1,5 @@
 #include "GeneticFuncs.h"
 #include <iostream> 
-#include <algorithm> // for std::find
 using namespace std;
 
 Route edgeRecombination(const Route &a, const Route &b);
@@ -27,15 +26,20 @@ Route edgeRecombination(const Route &a, const Route &b) {
 	int **connections = new int*[numCities];  //This will hold the possible connections which is the Union of the parent tours
 	int possibleConnections = 5;  //Every city can only possibly be connected to 4 other cities when combining parents (5th field is for ID)
 
+	//Store City IDs into the first column in the connections array 
+	//Example of how this array will look
+	//City A -> Connection1, Connection2, Connection3, Connection4
 	for (int i = 0; i < numCities; i++){
 		connections[i] = new int[numCities];
 		connections[i][0] = a.getCityAt(i).getId();  //Store the ID of cities from Tour A in the first column of array
 	}
 
+	//Collect the IDs of all possible connections from any city based on parent connections
+	//First store the connections for the current city in a vals array (temporary place holder) 
+	//After all the connections are found place them into the connections array 
 	for (int i = 0; i < numCities; i++){
 		int toFind = connections[i][0];		 //ID to search for in this iteration 
 		int vals[4] = { 0, 0, 0, 0 };		//Holds connections found for this ID 
-		#pragma omp parallel for
 		for (int j = 0; j < numCities; j++){
 			if (a.getCityAt(j).getId() == toFind)
 				if (j == numCities - 1){
@@ -64,6 +68,8 @@ Route edgeRecombination(const Route &a, const Route &b) {
 					vals[3] = b.getCityAt(j - 1).getId();
 				}
 		}
+
+		//Now store the found connections into the connections array
 		for (int l = 1; l < possibleConnections; l++){
 			if (vals[l - 1] != 0 && !inArray(vals[l - 1], connections[i], possibleConnections))
 				connections[i][l] = vals[l - 1];
@@ -91,7 +97,7 @@ Route edgeRecombination(const Route &a, const Route &b) {
 	}
 
 	//Now remove references to this city from other cities 
-	#pragma omp parallel for
+	//#pragma omp parallel for
 	for (int cities = 0; cities < numCities; cities++){
 		for (int links = 1; links < possibleConnections; links++){
 			if (connections[cities][links] == bestId)
@@ -99,6 +105,7 @@ Route edgeRecombination(const Route &a, const Route &b) {
 		}
 	}
 
+	//Go through and select a next city to fill the Child route with 
 	for (int i = 0; i < numCities-1; i++){
 		index = getIndex(child.getCityAt(i).getId(), connections, numCities);
 		//cout << index << endl;
@@ -130,7 +137,7 @@ Route edgeRecombination(const Route &a, const Route &b) {
 			//cout << "adding child" << endl;
 			child.addCity(a.getCityByID(bestId));
 		}
-		//Add random city (no clear best)
+		//Add random city out of possible connections (no clear best)
 		else if(numCons > 0){
 			random = rand() % (possibleConnections - 1) + 1; 
 			while (connections[index][random] == NULL)
@@ -139,7 +146,7 @@ Route edgeRecombination(const Route &a, const Route &b) {
 			//cout << "Best city found = " << a.getCityByID(bestId).getId() << endl;
 			child.addCity(a.getCityByID(bestId));
 		}
-		else {
+		else {	//No possible connections, add random city out of all remaining cities 
 			//cout << "No connections on " << child.getCityAt(i).getId() << endl;
 			int childCities = child.getNumCities();
 			int *posIds = new int[numCities - childCities];
@@ -165,7 +172,6 @@ Route edgeRecombination(const Route &a, const Route &b) {
 			child.addCity(a.getCityByID(bestId));
 		}
 		//Now remove references to this city from other cities 
-		#pragma omp parallel for
 		for (int cities = 0; cities < numCities; cities++){
 			for (int links = 1; links < possibleConnections; links++){
 				if (connections[cities][links] == bestId)
