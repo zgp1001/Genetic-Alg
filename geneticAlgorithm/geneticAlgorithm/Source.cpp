@@ -26,8 +26,8 @@ using namespace std;
 
 const int NUM_GENERATION_STOPPER = 10;	
 const int NUM_ROUTES = 1000;		//Size of parent population (usually ~number of cities ^2 is a good starting point) 
-const int NUM_CITIES = 51;			//Must be set equal to data set in string FILE_NAME
-const string FILE_NAME = "51City426.txt";	//Name of TSPLIB formatted data file 
+const int NUM_CITIES = 70;			//Must be set equal to data set in string FILE_NAME
+const string FILE_NAME = "70C675.txt";	//Name of TSPLIB formatted data file 
 const int NUM_THREADS = 4;			//Controls the level of parallel (OMP_SET_NUM_THREADS uses this value)  
 
 //Bubble sort for fun
